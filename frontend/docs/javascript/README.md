@@ -174,3 +174,198 @@ console.log(combinedArr); // Вывод: [1, 2, 3, 4]
 ```
 
 
+## Что такое ассинхронный код? 
+
+Приведите примеры с `Promise` и `async await`
+
+
+Ответ: Это код, который выполняется не последовательно от начала до конца, а в определенное время или в ответ на определенное событие.
+
+Пример:
+```go
+// Пример асинхронной функции, возвращающей промис
+function fetchData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve('Данные были успешно загружены');
+    }, 2000);
+  });
+}
+
+fetchData()
+  .then(data => {
+    console.log(data); // Вывод: 'Данные были успешно загружены'
+  })
+  .catch(error => {
+    console.error(error);
+  });
+  
+  // Использование async/await для выполнения асинхронной операции
+async function getData() {
+  try {
+    const data = await fetchData();
+    console.log(data); // Вывод: 'Данные были успешно загружены'
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+getData();
+
+```
+
+### Что делает `Promise.all()`?
+
+Приведите примеры.
+
+Ответ: это метод в JavaScript, который принимает массив промисов и возвращает новый промис, который будет разрешен, когда все промисы в массиве будут разрешены, или будет отклонен с результатом первого отклоненного промиса.
+
+Пример:
+```go
+const promise1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('Промис 1 завершен');
+  }, 2000);
+});
+
+const promise2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('Промис 2 завершен');
+  }, 1500);
+});
+
+const promise3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('Промис 3 завершен');
+  }, 1000);
+});
+
+// Использование Promise.all() для ожидания завершения всех промисов
+Promise.all([promise1, promise2, promise3])
+  .then((results) => {
+    console.log(results);
+    // Вывод: ['Промис 1 завершен', 'Промис 2 завершен', 'Промис 3 завершен']
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+```
+
+### Что делает `Promise.allSetled()`?
+
+Приведите примеры.
+
+Ответ: то метод в JavaScript, который принимает массив промисов и возвращает новый промис, который разрешается, когда все промисы в массиве завершатся, `независимо от того, были они разрешены или отклонены`. Результатом разрешенного промиса будет `массив объектов`, представляющих результаты каждого промиса.
+
+Пример:
+```go
+const promise1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('Промис 1 завершен');
+  }, 2000);
+});
+
+const promise2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject('Ошибка: Промис 2 отклонен');
+  }, 1500);
+});
+
+const promise3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('Промис 3 завершен');
+  }, 1000);
+});
+
+// Использование Promise.allSettled() для ожидания завершения всех промисов
+Promise.allSettled([promise1, promise2, promise3])
+  .then((results) => {
+    console.log(results);
+    /*
+    Вывод:
+    [
+      { status: 'fulfilled', value: 'Промис 1 завершен' },
+      { status: 'rejected', reason: 'Ошибка: Промис 2 отклонен' },
+      { status: 'fulfilled', value: 'Промис 3 завершен' }
+    ]
+    */
+  });
+```
+### Что такое Event loop?
+
+Что такое `Microtask` и `Macrotask`?
+
+
+Ответ: 
+
+Event loop - это механизм в браузере или среде выполнения JavaScript, который обрабатывает выполнение асинхронного кода и событий. Event loop позволяет JavaScript быть однопоточным, но все еще обрабатывать асинхронные операции, такие как таймауты, обработка событий и выполнение промисов.
+
+Microtask и Macrotask - это два типа задач, которые могут быть добавлены в очередь для выполнения в Event loop. Microtasks обычно имеют более высокий приоритет и выполняются после каждого выполненного скрипта или после выполнения Macrotask, в то время как Macrotasks выполняются в ответ на внешние события, такие как события таймаута, ввода-вывода и анимации.
+
+
+### Что выведет консоль лог и почему?
+
+
+```go
+console.log('sync 1')
+
+setTimeout(() => {
+    console.log('setTimeout 2');
+    setTimeout(() => {
+        console.log('setTimeout inside setTimeout 3');
+    }, 0)
+    Promise.resolve().then(() => {
+        console.log('Promise inside setTimeout 4');
+        setTimeout(() => {
+            console.log('setTimeout inside promise 5');
+        }, 0)
+    })
+    console.log('setTimeout 6');
+}, 0)
+
+setTimeout(() => {
+    console.log('setTimeout 7');
+})
+
+Promise.resolve().then(() => {
+    console.log('promise 8');
+})
+
+Promise.resolve().then(() => {
+    console.log('promise 9');
+    Promise.resolve().then(() => {
+        console.log('promise inside promise 10');
+    })
+})
+
+console.log('sync 11')
+
+```
+
+
+Ответ: Лог выведет 
+
+
+```go
+sync 1
+sync 11
+promise 8
+promise 9
+promise inside promise 10
+setTimeout 2
+setTimeout 6
+Promise inside setTimeout 4
+setTimeout 7
+setTimeout inside setTimeout 3
+setTimeout inside promise 5
+```
+
+, т.к. Сначала выполнится синхронный код, поэтому `sync 1` и `sync 11` выводятся первыми.
+Затем обработка Microtasks: выполняется первое Microtask `Promise.resolve().then(() => { console.log('promise 8'); })`, затем второе Microtask `Promise.resolve().then(() => { console.log('promise 9'); ... })` и вложенный Microtask `Promise.resolve().then(() => { console.log('promise inside promise 10'); })`.
+Затем начинается выполнение Macrotasks: `setTimeout(() => { console.log('setTimeout 2'); ... })` добавляет Macrotask в очередь, затем `setTimeout(() => { console.log('setTimeout 7'); })`.
+Внутри первого `setTimeout` происходит добавление новых Macrotasks и Microtasks, их выполнение происходит в порядке добавления в очередь.
+
+
+Главное, что нужно понять во всем этом – это то что `сначала выполняется синхронный код`, потом `все микротаски`, когда они кончаются выполняется `одна макротаска`, затем если появились новые микротаски `выполняются все` они (макротаска может породить микротаску/ки), если микротасок не появилась выполнится `следующая (одна)` макротаска и опять будут выполнятся все микротаски если они есть, и так получается цикл событий `Event loop`.
+
+
