@@ -251,7 +251,7 @@ Promise.all([promise1, promise2, promise3])
   });
 ```
 
-### Что делает `Promise.allSetled()`?
+### Что делает `Promise.allSettled()`?
 
 Приведите примеры.
 
