@@ -14,7 +14,7 @@
 
 ### 7. [storages](./docs/storages/README.md)
 
-### 8. [seo](./docs/javascriseopt/README.md)
+### 8. [seo](./docs/seo/README.md)
 
 ### 9. [ssr](./docs/ssr/README.md)
 
